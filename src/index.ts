@@ -22,7 +22,6 @@ const appData = new AppState(events);
 const page = new Page(document.body, events);
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 
-
 const templates = document.querySelectorAll('template');
 
 interface ITemplates {
@@ -43,7 +42,6 @@ const order = new Order(cloneTemplate(TEMPLATES['order']), events);
 const contact = new Contacts(cloneTemplate(TEMPLATES['contacts']), events);
 const success = new Success(cloneTemplate(TEMPLATES['success']), {onClick() {
 	modal.close();
-	appData.clearBasket();
 },})
 
 events.on<CatalogChangeEvent>('items:changed', () => {
@@ -66,17 +64,15 @@ events.on('preview:changed', (item: IProduct) => {
 			onClick: () => {
 				if (!appData.isProductInBasket(item)) {
 					appData.addToBasket(item);
-					
 				} else {
 					appData.removeFromBasket(item);
-					
 				}
-				modal.close()
+				modal.close();
 			},
 		}
 	).render(item);
 	const productInstance = new Product(modalCardContent);
-    productInstance.updateButtonText(appData.isProductInBasket(item));
+	productInstance.updateButtonText(appData.isProductInBasket(item));
 	modal.content = modalCardContent;
 	modal.open();
 });
@@ -122,7 +118,6 @@ events.on('order:submit', () => {
 	};
 	const contactsContent = contact.render(initialState);
 	modal.content = contactsContent;
-
 });
 
 events.on('contacts:submit', () => {
@@ -134,17 +129,18 @@ events.on('contacts:submit', () => {
 		total: appData.basket.total,
 		items: appData.basket.items,
 	};
-	
-	api.orderItems(order)
+
+	api
+		.orderItems(order)
 		.then((data) => {
 			const successContent = success.render({ total: data.total });
 			modal.content = successContent;
+			appData.clearBasket();
 		})
 		.catch((error) => {
 			console.error(`Не удалось обработать заказ: ${error.message}`);
 		});
 });
-
 
 events.on('formErrors:change', (errors: Partial<OrderForm>) => {
 	const { payment, address, email, phone } = errors;

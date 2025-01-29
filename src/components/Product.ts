@@ -117,6 +117,8 @@ export default class Product extends Component<IProduct> {
 	}
 
 	updateButtonText(isProductInBasket: boolean): void {
-        this._button.textContent = isProductInBasket ? 'Удалить из корзины' : 'Добавить в корзину';
+		this._button.textContent = isProductInBasket
+			? 'Удалить из корзины'
+			: 'Добавить в корзину';
 	}
- }
+}
