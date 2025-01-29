@@ -1,4 +1,4 @@
-import { Component } from './base/Compontent';
+import { Component } from './base/Component';
 import { createElement, ensureElement } from '../utils/utils';
 import { EventEmitter } from './base/events';
 import { uiConfig } from '../utils/constants';
@@ -6,7 +6,6 @@ import { uiConfig } from '../utils/constants';
 interface IBasketView {
 	items: HTMLElement[];
 	total: number;
-	selected: string[];
 }
 
 export class Basket extends Component<IBasketView> {
@@ -59,7 +58,6 @@ export class Basket extends Component<IBasketView> {
 	}
 
 	set total(total: number) {
-		console.log(`Setting total_2: ${total}`);
 		this.setText(this._total, total + ' синапсов');
 	}
 }

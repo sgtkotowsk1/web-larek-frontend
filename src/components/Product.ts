@@ -1,11 +1,10 @@
 import { IProduct } from '../types';
-import { Component } from './base/Compontent';
+import { Component } from './base/Component';
 import { uiConfig } from '../utils/constants';
 import { ensureElement } from '../utils/utils';
 
 interface IProductActions {
 	onClick: (e: MouseEvent) => void;
-	onRemove?: () => void;
 }
 
 export default class Product extends Component<IProduct> {
@@ -99,10 +98,6 @@ export default class Product extends Component<IProduct> {
 	}
 	set image(value: string) {
 		this.setImage(this._image, value, this.title);
-	}
-
-	set button(value: string) {
-		this.setText(this._button, value);
 	}
 
 	set index(value: string) {

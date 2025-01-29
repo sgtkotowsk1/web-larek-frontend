@@ -1,4 +1,4 @@
-import { Component } from './base/Compontent';
+import { Component } from './base/Component';
 import { IEvents } from './base/events';
 import { ensureElement } from '../utils/utils';
 import { uiConfig } from '../utils/constants';

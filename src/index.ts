@@ -13,7 +13,7 @@ import { Modal } from './components/common/Modal';
 import { Basket } from './components/Basket';
 import { Order } from './components/Order';
 import { IFormState } from './components/common/Form';
-import { Contacts } from './components/CustomerContacts';
+import { Contacts } from './components/Contacts';
 import { Success } from './components/Success';
 
 const api = new WebLarekApi(CDN_URL, API_URL);
@@ -36,8 +36,6 @@ templates.forEach((template: HTMLTemplateElement) => {
 		TEMPLATES[templateId] = template;
 	}
 });
-
-console.log(TEMPLATES);
 
 const basket = new Basket(cloneTemplate(TEMPLATES['basket']), events);
 const order = new Order(cloneTemplate(TEMPLATES['order']), events);
@@ -82,7 +80,6 @@ events.on('preview:changed', (item: IProduct) => {
 });
 
 events.on('basket:updated', () => {
-	console.log(`Updating basket. Total: ${appData.basket.total}`);
 	page.counter = appData.basket.items.length;
 
 	basket.items = appData.basket.items.map((id, index) => {
@@ -166,7 +163,6 @@ events.on(
 	/^order\..*:change/,
 	(data: { field: keyof OrderForm; value: string }) => {
 		appData.updateOrderField(data.field, data.value);
-		order.valid = true;
 	}
 );
 

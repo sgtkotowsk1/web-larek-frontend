@@ -1,4 +1,4 @@
-import { Component } from './base/Compontent';
+import { Component } from './base/Component';
 import { ensureElement } from '../utils/utils';
 import { IOrderResult } from '../types';
 

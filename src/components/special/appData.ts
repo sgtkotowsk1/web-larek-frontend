@@ -11,11 +11,18 @@ export type CatalogChangeEvent = {
 	catalog: IProduct[];
 };
 
-export class AppState {
-	productList: IProduct[] = [];
-	basket: IBasket = { items: [], total: 0 };
-	selectedProduct?: IProduct;
-	currentOrder: IOrder = this._createEmptyOrder();
+interface IAppState {
+	selectedProduct: IProduct;
+	basket: {}
+	productList: IProduct[];
+	currentOrder: IOrder;
+}
+
+export class AppState implements IAppState {
+	productList: IProduct[] = []; 
+    basket: IBasket = { items: [], total: 0 };
+    selectedProduct: IProduct; 
+    currentOrder: IOrder = this._createEmptyOrder(); 
 	private validationErrors: Partial<Record<keyof OrderForm, string>> = {};
 
 	constructor(private eventManager: IEvents) {}
@@ -109,7 +116,7 @@ export class AppState {
 	}
 
 	private _isValidPhone(phone: string): boolean {
-		const sanitizedPhone = phone.replace(/\s+/g, '');
+		const sanitizedPhone = phone.replace(/[\s\(\)-]+/g, '');
 		const phoneRegex = /^(?:\+7|8)\d{10}$/;
 		return (
 			phoneRegex.test(sanitizedPhone) &&

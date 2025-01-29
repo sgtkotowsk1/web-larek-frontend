@@ -1,4 +1,4 @@
-import { Component } from '../base/Compontent';
+import { Component } from '../base/Component';
 import { IEvents } from '../base/events';
 import { ensureElement } from '../../utils/utils';
 
@@ -46,12 +46,5 @@ export class Form<T> extends Component<IFormState> {
 
 	set errors(value: string) {
 		this.setText(this._errors, value);
-	}
-
-	render(state: Partial<T> & IFormState) {
-		const { valid, errors, ...inputs } = state;
-		super.render({ valid, errors });
-		Object.assign(this, inputs);
-		return this.container;
 	}
 }
