@@ -48,7 +48,7 @@ yarn build
 
 Приложение работает со следующими типами данных:
 Интерфейс, описывающий товар.
-```
+```typescript
 interface IProduct {
 	id: string;
 	description: string;
@@ -59,11 +59,11 @@ interface IProduct {
 }
 ```
 Тип, описывающий способ оплаты заказа.
-```
+```typescript
 type PaymentMethod = 'cash' | 'card';
 ```
 Интерфейс, описывающий заказ пользователя.
-```
+```typescript
 interface IOrder {
 	payment: PaymentMethod;
 	email: string;
@@ -74,25 +74,25 @@ interface IOrder {
 }
 ```
 Интерфейс, описывающий то, каким должен быть ответ от сервера при успешном заказе.
-```
+```typescript
 interface IOrderResult {
 	id: string;
 	total: number;
 }
 ```
 Интерфейс, описывающий корзину с товарами.
-```
+```typescript
 interface IBasket {
 	items: string[];
 	total: number;
 }
 ```
 Тип для формы заказа, исключающий некоторые типы из интерфейса заказа пользователя
-```
+```typescript
 type OrderForm = Omit<IOrder, 'total' | 'items'>;
 ```
 Тип для формы данных пользователя, исключающий некоторые типы из интерфейса заказа пользователя
-```
+```typescript
 type ContactForm = Omit<
 	IOrder,
 	'total' | 'items' | 'payment' | 'address'
@@ -133,14 +133,14 @@ type ContactForm = Omit<
 ### Базовый класс Api
 В этом классе реализован набор операций для взаимодействия с сервером.
 HTTP методы типизированы как `TApiPostMethods`;
-```
+```typescript
 type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
 ```
 ## Модели данных
 ### Класс AppState
 Модель данных прилоежния с набором методов работы с данными. В данной реализации выполняет роль распределителя между товарами, корзиной и заказом.
 Реализовано в интерфейсе:
-```
+```typescript
 interface IAppState {
 	selectedProduct: IProduct;
 	basket: {}
@@ -193,5 +193,99 @@ private _createEmptyOrder(): IOrder {}
 private _notifyBasketUpdated(): void {}
 ```
 
+## Специальные компоненты
+### WebLarekApi
+Специальный класс WebLakerApi реализован в интерфейсе `IWebLarek` для взаимодействия с сервером с целью получения коллекции товаров и оформления заказа.
+Наследуется от базового класса `Api`.
+```typescript
+interface IWebLarekApi {
+	getItem: (id: string) => Promise<IProduct>;
+	getList: () => Promise<IProduct[]>;
+	orderItems: (order: IOrder) => Promise<IOrderResult>;
+}
+```
+## Отображения
+### Глобальные компоненты**
+**Page**<br>
+Данный компонент необходим для отображения всей страницы.
+Реализует интерфейс IPage. Контролирует возможность скроллинга страницы и подсчитывает количество товаров в корзине.
+```typescript
+interface IPage {
+	counter: number;
+	catalog: HTMLElement[];
+	locked: boolean;
+}
+```
+**Modal**<br>
+Данный компонент необходим для отображения модального окна и контента в нем. Реализован в интерфейса `IModalData`
+Реализует методы открытия и закрытия модального окна
+
+```typescript
+interface IModalData {
+	content: HTMLElement;
+}
+```
+```typescript
+// Открыть модальное окно
+open() {}
+// Закрыть модальное окно
+close() {}
+}
+```
+
+
+**Form**<br>
+Компонент для отображения формы. Данный компонент контролирует условия выполнения валидации формы и реализует отправку данных на сервер.
+Реализован в интерфейсе `IFormState`.
+```typescript
+interface IFormState {
+	valid: boolean;
+	errors: string[];
+}
+```
+### Компоненты корзины
+**Basket** <br>
+Данный компонент отвечает за отображение корзины. Реализован в интерфейсе `IBasketView`.
+Содержит коллекцию из упрощенных вариантов реализации класса Product, конечной суммы товаров в корзине
+```typescript
+interface IBasketView {
+	items: HTMLElement[];
+	total: number;
+	selected: string[];
+}
+```
+### Компоненты заказа
+
+**Order**<br>
+Данный компонент отвечает за отображение формы заказа, включающий следующие пользовательские инпуты: способ оплаты, адрес доставки.
+Наследует класс `Form` и реализует тип `OrderForm`
+```typescript
+type OrderForm = Omit<IOrder, 'total' | 'items'>;
+```
+
+**Contacts**<br>
+Данный компонент отвечает за отображение формы заказа, включающий следующие пользовательский инпуты: электронная почта, номер телефона.
+Наследует класс `Form` и реализует тип `ContactForm`.
+```typescript
+type ContactForm = Omit<
+	IOrder,
+	'total' | 'items' | 'payment' | 'address'
+```
+
+### Компонент товара
+
+**Product**
+Данный компонент реализует совокупность всех возможных отображений товаров на странице в интерфейсе `IProduct`.
+
+```typescript
+interface IProduct {
+	id: string;
+	description: string;
+	price: number | undefined;
+	title: string;
+	image: string;
+	category: string;
+}
+```
 
 
