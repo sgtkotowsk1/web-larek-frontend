@@ -274,9 +274,8 @@ type ContactForm = Omit<
 
 ### Компонент товара
 
-**Product**
-Данный компонент реализует совокупность всех возможных отображений товаров на странице в интерфейсе `IProduct`.
-
+**Product**<br>
+Данный компонент реализует совокупность всех возможных отображений товаров на странице в интерфейсе `IProduct`. 
 ```typescript
 interface IProduct {
 	id: string;
@@ -287,5 +286,3 @@ interface IProduct {
 	category: string;
 }
 ```
-
-
