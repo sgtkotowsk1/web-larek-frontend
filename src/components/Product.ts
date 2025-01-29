@@ -115,4 +115,8 @@ export default class Product extends Component<IProduct> {
 			this._button.disabled = !value;
 		}
 	}
-}
+
+	updateButtonText(isProductInBasket: boolean): void {
+        this._button.textContent = isProductInBasket ? 'Удалить из корзины' : 'Добавить в корзину';
+	}
+ }

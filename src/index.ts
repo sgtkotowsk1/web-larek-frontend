@@ -22,6 +22,7 @@ const appData = new AppState(events);
 const page = new Page(document.body, events);
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
 
+
 const templates = document.querySelectorAll('template');
 
 interface ITemplates {
@@ -40,6 +41,10 @@ templates.forEach((template: HTMLTemplateElement) => {
 const basket = new Basket(cloneTemplate(TEMPLATES['basket']), events);
 const order = new Order(cloneTemplate(TEMPLATES['order']), events);
 const contact = new Contacts(cloneTemplate(TEMPLATES['contacts']), events);
+const success = new Success(cloneTemplate(TEMPLATES['success']), {onClick() {
+	modal.close();
+	appData.clearBasket();
+},})
 
 events.on<CatalogChangeEvent>('items:changed', () => {
 	page.catalog = appData.productList.map((item: IProduct) => {
@@ -61,20 +66,17 @@ events.on('preview:changed', (item: IProduct) => {
 			onClick: () => {
 				if (!appData.isProductInBasket(item)) {
 					appData.addToBasket(item);
-					modal.close();
+					
 				} else {
 					appData.removeFromBasket(item);
-					modal.close();
+					
 				}
+				modal.close()
 			},
 		}
 	).render(item);
-	const button = modalCardContent.querySelector(
-		`.${uiConfig.card.button}`
-	) as HTMLButtonElement;
-	appData.isProductInBasket(item)
-		? (button.textContent = 'Удалить из корзины')
-		: (button.textContent = 'Добавить в корзину');
+	const productInstance = new Product(modalCardContent);
+    productInstance.updateButtonText(appData.isProductInBasket(item));
 	modal.content = modalCardContent;
 	modal.open();
 });
@@ -109,7 +111,6 @@ events.on('order:open', () => {
 	};
 	const orderContent = order.render(initialState);
 	modal.content = orderContent;
-	modal.open();
 });
 
 events.on('order:submit', () => {
@@ -121,22 +122,21 @@ events.on('order:submit', () => {
 	};
 	const contactsContent = contact.render(initialState);
 	modal.content = contactsContent;
-	modal.open();
+
 });
 
 events.on('contacts:submit', () => {
-	appData.currentOrder.total = appData.basket.total;
-	appData.currentOrder.items = appData.basket.items;
-	api
-		.orderItems(appData.currentOrder)
+	const order = {
+		email: appData.currentOrder.email,
+		phone: appData.currentOrder.phone,
+		address: appData.currentOrder.address,
+		payment: appData.currentOrder.payment,
+		total: appData.basket.total,
+		items: appData.basket.items,
+	};
+	
+	api.orderItems(order)
 		.then((data) => {
-			const success = new Success(cloneTemplate(TEMPLATES['success']), {
-				onClick: () => {
-					modal.close();
-					appData.clearBasket();
-				},
-			});
-
 			const successContent = success.render({ total: data.total });
 			modal.content = successContent;
 		})
@@ -144,6 +144,7 @@ events.on('contacts:submit', () => {
 			console.error(`Не удалось обработать заказ: ${error.message}`);
 		});
 });
+
 
 events.on('formErrors:change', (errors: Partial<OrderForm>) => {
 	const { payment, address, email, phone } = errors;
