@@ -5,7 +5,7 @@ import { EventEmitter } from './components/base/events';
 import Product from './components/Product';
 import WebLarekApi from './components/special/WebLarekApi';
 
-import { ContactForm, IProduct, OrderForm } from './types';
+import { ContactForm, IOrder, IProduct, OrderForm } from './types';
 import { API_URL, CDN_URL, uiConfig } from './utils/constants';
 import { Page } from './components/Page';
 import { cloneTemplate, ensureElement } from './utils/utils';
@@ -111,8 +111,8 @@ events.on('order:open', () => {
 
 events.on('order:submit', () => {
 	const initialState: Partial<ContactForm> & IFormState = {
-		phone: '',
-		email: '',
+		phone:  "",
+		email:  "",
 		valid: false,
 		errors: [],
 	};
@@ -122,14 +122,9 @@ events.on('order:submit', () => {
 
 events.on('contacts:submit', () => {
 	const order = {
-		email: appData.currentOrder.email,
-		phone: appData.currentOrder.phone,
-		address: appData.currentOrder.address,
-		payment: appData.currentOrder.payment,
-		total: appData.basket.total,
-		items: appData.basket.items,
-	};
-
+		...appData.currentOrder,
+		...appData.basket
+	}
 	api
 		.orderItems(order)
 		.then((data) => {
